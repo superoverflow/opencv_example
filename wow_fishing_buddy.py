@@ -27,9 +27,9 @@ def get_focus_region():
     bot_right_y = int(SCREEN_SIZE[1] * LOWER_CUT)
     return top_left_x, top_left_y, bot_right_x, bot_right_y
 
-def get_screenshot(region):
+def get_screenshot(region=None):
     img = pyautogui.screenshot(region=region)
-    return img
+    return np.array(img)
 
 def compute_diff_from_images(img1, img2):
     diff = img2 - img1
@@ -95,19 +95,16 @@ def main():
     logging.info("Focus region : {}".format(region))
 
     logging.info("Taking inital screenshot")
-    before = pyautogui.screenshot(region=region)
+    img1 = get_screenshot(region=region)
 
     logging.info("Sending a float")
     pyautogui.press("1")
 
     logging.info("Wait for 2 sec before capture new snapshot")
     time.sleep(2)
-    after = pyautogui.screenshot(region=region)
+    img2 = get_screenshot(region=region)
 
     logging.info("running comparison")
-    img1 = np.array(before)
-    img2 = np.array(after)
-
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     (score, diff) = compare_ssim(gray1, gray2, full=True)
@@ -130,8 +127,7 @@ def main():
     pyautogui.moveTo(cur_x, cur_y, 0.5)
 
     # log the screen image
-    fullscrn = pyautogui.screenshot()
-    fullscrn_img = np.array(fullscrn)
+    fullscrn_img = get_screenshot()
     cv2.rectangle(fullscrn_img,
                   (region[0], region[1]),
                   (region[2], region[3]),
