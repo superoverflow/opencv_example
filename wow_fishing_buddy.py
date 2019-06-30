@@ -32,8 +32,21 @@ def get_screenshot(region=None):
     return np.array(img)
 
 def compute_diff_from_images(img1, img2):
-    diff = img2 - img1
-    return diff
+    """ compare two images to find out where the fishing float is
+    """
+    logging.info("running comparison")
+    gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    (score, diff) = compare_ssim(gray1, gray2, full=True)
+    diff = (diff * 255).astype("uint8")
+
+    thresh = cv2.threshold(diff, 0, 255,
+    	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
+    im, contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+	    cv2.CHAIN_APPROX_SIMPLE)
+    contours.sort(key=cv2.contourArea, reverse=True)
+    biggest_cnt = contours[0]
+    return biggest_cnt
 
 def now_str():
     return datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -99,21 +112,8 @@ def main():
     logging.info("Wait for 2 sec before capture new snapshot")
     time.sleep(2)
     img2 = get_screenshot(region=region)
-
-    logging.info("running comparison")
-    gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
-    (score, diff) = compare_ssim(gray1, gray2, full=True)
-    diff = (diff * 255).astype("uint8")
-
-    thresh = cv2.threshold(diff, 0, 255,
-    	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-    im2, contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
-	    cv2.CHAIN_APPROX_SIMPLE)
-    contours.sort(key=cv2.contourArea, reverse=True)
-    biggest_cnt = contours[0]
+    biggest_cnt = compute_diff_from_images(img1, img2)
     biggest_cnt_shifted = biggest_cnt + (region[0], region[1])
-
     # find center of mass
     M = cv2.moments(biggest_cnt_shifted)
     cur_x = int(M["m10"] / M["m00"])
