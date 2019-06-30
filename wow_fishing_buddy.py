@@ -12,15 +12,14 @@ import math
 import audioop
 from collections import deque
 
-
+SCREEN_SIZE = (1280, 768)
+UPPER_CUT = 0.2
+LOWER_CUT = 0.75
 LOGFMT = ("%(asctime)-15s [%(levelname)-5s] %(filename)-10s:%(lineno)-3d "
             "%(message)s")
 logging.basicConfig(level=logging.DEBUG, format=LOGFMT)
 
 def get_focus_region():
-    UPPER_CUT = 0.2
-    LOWER_CUT = 0.75
-    SCREEN_SIZE = (1280, 768)
     top_left_x = int(SCREEN_SIZE[0] * UPPER_CUT)
     top_left_y = int(SCREEN_SIZE[1] * UPPER_CUT)
     bot_right_x = int(SCREEN_SIZE[0] * LOWER_CUT)
