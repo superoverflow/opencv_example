@@ -38,8 +38,12 @@ def compute_diff_from_images(img1, img2):
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     (score, diff) = compare_ssim(gray1, gray2, full=True)
-    diff = (diff * 255).astype("uint8")
 
+    logging.debug("diff score is {}".format(score))
+    if score > 0.99:
+        raise Exception("the images is almost the same")
+
+    diff = (diff * 255).astype("uint8")
     thresh = cv2.threshold(diff, 0, 255,
     	cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
     im, contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
