@@ -111,8 +111,32 @@ def send_fishing_float():
 def move_cursor_to_fishing_float(x,y):
     pyautogui.moveTo(x, y, 0.5)
 
+def debug_img_info(region, cur_x, cur_y, biggest_cnt):
+    fullscrn_img = get_screenshot()
+    cv2.rectangle(fullscrn_img,
+                  (region[0], region[1]),
+                  (region[2], region[3]),
+                  (0, 255, 255))
+
+    pyautogui.moveTo(cur_x, cur_y, 0.5)
+    biggest_cnt_shifted = biggest_cnt + (region[0], region[1])
+    cv2.drawContours(fullscrn_img, [biggest_cnt_shifted], 0, (0,0,255), 0)
+    cv2.circle(fullscrn_img, (cur_x, cur_y), 7, (255, 255, 255), -1)
+    cv2.imwrite("debug/{}.png".format(now_str()), fullscrn_img)
+
+    window_name = 'fishing'
+    window_width = 1920 - 1280
+    window_height = int(1280 * (1920 -1280)/1920)
+
+    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+    cv2.moveWindow(window_name, 1280, 0)
+    cv2.resizeWindow(window_name, window_width, window_height)
+    fullscrn_img_small = cv2.resize(fullscrn_img, (window_width, window_height))
+    cv2.imshow(window_name, fullscrn_img_small)
+    cv2.waitKey(1000)
+
 def main():
-    logging.info("Waiting 2 Sec before switching to WOW")
+    logging.info("Waiting 4 Sec before starting, swtich to wow now")
     time.sleep(2)
 
     region = get_focus_region()
@@ -129,45 +153,16 @@ def main():
     img2 = get_screenshot(region=region)
     biggest_cnt = compute_diff_from_images(img1, img2)
     cur_x, cur_y = find_center_of_fishing_float(focus_region=region, cv2_cnt=biggest_cnt)
-    biggest_cnt_shifted = biggest_cnt + (region[0], region[1])
-    M = cv2.moments(biggest_cnt_shifted)
-    cur_x = int(M["m10"] / M["m00"])
-    cur_y = int(M["m01"] / M["m00"])
-    logging.info("Float center at: {}, {}".format(cur_x, cur_y))
 
     move_cursor_to_fishing_float(cur_x, cur_y, 0.5)
-
-    # log the screen image
-    fullscrn_img = get_screenshot()
-    cv2.rectangle(fullscrn_img,
-                  (region[0], region[1]),
-                  (region[2], region[3]),
-                  (0, 255, 255))
-
-    pyautogui.moveTo(cur_x, cur_y, 0.5)
-
-    cv2.drawContours(fullscrn_img, [biggest_cnt_shifted], 0, (0,0,255), 0)
-    cv2.circle(fullscrn_img, (cur_x, cur_y), 7, (255, 255, 255), -1)
-    cv2.imwrite("debug/{}.png".format(now_str()), fullscrn_img)
-
-    window_name = 'fishing'
-    window_width = 1920 - 1280
-    window_height = int(1280 * (1920 -1280)/1920)
-
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.moveWindow(window_name, 1280, 0)
-    cv2.resizeWindow(window_name, window_width, window_height)
-    fullscrn_img_small = cv2.resize(fullscrn_img, (window_width, window_height))
-    cv2.imshow(window_name, fullscrn_img_small)
-    cv2.waitKey(1000)
+    debug_img_info(region, cur_x, cur_y, biggest_cnt)
 
     if listen():
         logging.debug('now click the float')
         pyautogui.click()
-        logging.debug('sleep for 2 sec to reset the pic')
         time.sleep(2)
     else:
-        logging.debug('trying again!')
+        logging.debug('No fish captured!')
 
 
 if __name__ == '__main__':
