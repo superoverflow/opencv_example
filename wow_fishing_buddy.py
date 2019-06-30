@@ -3,7 +3,6 @@ import pyautogui
 from skimage.measure import compare_ssim
 import numpy as np
 import pyautogui
-import imutils
 import cv2
 import time
 from datetime import datetime
@@ -22,10 +21,10 @@ def get_focus_region():
     UPPER_CUT = 0.2
     LOWER_CUT = 0.75
     SCREEN_SIZE = (1280, 768)
-    top_left_x = int(SCREEN_SIZE[0] * UPPER_CUT) 
-    top_left_y = int(SCREEN_SIZE[1] * UPPER_CUT) 
-    bot_right_x = int(SCREEN_SIZE[0] * LOWER_CUT) 
-    bot_right_y = int(SCREEN_SIZE[1] * LOWER_CUT) 
+    top_left_x = int(SCREEN_SIZE[0] * UPPER_CUT)
+    top_left_y = int(SCREEN_SIZE[1] * UPPER_CUT)
+    bot_right_x = int(SCREEN_SIZE[0] * LOWER_CUT)
+    bot_right_y = int(SCREEN_SIZE[1] * LOWER_CUT)
     return top_left_x, top_left_y, bot_right_x, bot_right_y
 
 def get_screenshot(region):
@@ -91,16 +90,16 @@ def listen():
 def main():
     logging.info("Waiting 2 Sec before switching to WOW")
     time.sleep(2)
-    
+
     region = get_focus_region()
     logging.info("Focus region : {}".format(region))
 
     logging.info("Taking inital screenshot")
     before = pyautogui.screenshot(region=region)
-    
+
     logging.info("Sending a float")
     pyautogui.press("1")
-    
+
     logging.info("Wait for 2 sec before capture new snapshot")
     time.sleep(2)
     after = pyautogui.screenshot(region=region)
@@ -108,7 +107,7 @@ def main():
     logging.info("running comparison")
     img1 = np.array(before)
     img2 = np.array(after)
-    
+
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     (score, diff) = compare_ssim(gray1, gray2, full=True)
@@ -121,7 +120,7 @@ def main():
     contours.sort(key=cv2.contourArea, reverse=True)
     biggest_cnt = contours[0]
     biggest_cnt_shifted = biggest_cnt + (region[0], region[1])
-    
+
     # find center of mass
     M = cv2.moments(biggest_cnt_shifted)
     cur_x = int(M["m10"] / M["m00"])
@@ -129,15 +128,15 @@ def main():
     logging.info("Float center at: {}, {}".format(cur_x, cur_y))
 
     pyautogui.moveTo(cur_x, cur_y, 0.5)
-    
+
     # log the screen image
     fullscrn = pyautogui.screenshot()
     fullscrn_img = np.array(fullscrn)
-    cv2.rectangle(fullscrn_img, 
-                  (region[0], region[1]), 
-                  (region[2], region[3]), 
+    cv2.rectangle(fullscrn_img,
+                  (region[0], region[1]),
+                  (region[2], region[3]),
                   (0, 255, 255))
-    
+
     pyautogui.moveTo(cur_x, cur_y, 0.5)
 
     cv2.drawContours(fullscrn_img, [biggest_cnt_shifted], 0, (0,0,255), 0)
