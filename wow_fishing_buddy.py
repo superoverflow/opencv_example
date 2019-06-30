@@ -41,7 +41,7 @@ def compute_diff_from_images(img1, img2):
 
     logging.debug("diff score is {}".format(score))
     if score > 0.99:
-        raise Exception("the images is almost the same")
+        raise Exception("the images are almost the same")
 
     diff = (diff * 255).astype("uint8")
     thresh = cv2.threshold(diff, 0, 255,
