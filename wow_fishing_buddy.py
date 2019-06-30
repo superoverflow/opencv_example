@@ -144,13 +144,12 @@ def main():
 
     logging.info("Taking inital screenshot")
     img1 = get_screenshot(region=region)
-
     logging.info("Sending a float")
     send_fishing_float()
-
     logging.info("Wait for 2 sec before capture new snapshot")
     time.sleep(2)
     img2 = get_screenshot(region=region)
+
     biggest_cnt = compute_diff_from_images(img1, img2)
     cur_x, cur_y = find_center_of_fishing_float(focus_region=region, cv2_cnt=biggest_cnt)
 
