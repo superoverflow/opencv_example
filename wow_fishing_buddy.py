@@ -49,9 +49,7 @@ def listen():
 	SILENCE_LIMIT = 1  # Silence limit in seconds. The max ammount of seconds where
 	                   # only silence is recorded. When this time passes the
 	                   # recording finishes and the file is delivered.
-	#Open stream
 	p = pyaudio.PyAudio()
-
 	stream = p.open(format=FORMAT,
 	                channels=CHANNELS,
 	                rate=RATE,
@@ -60,7 +58,6 @@ def listen():
 	cur_data = ''  # current chunk  of audio data
 	rel = int(RATE/CHUNK)
 	slid_win = deque(maxlen=SILENCE_LIMIT * rel)
-
 
 	success = False
 	listening_start_time = time.time()
@@ -81,7 +78,6 @@ def listen():
 		except IOError:
 			break
 
-	# print "* Done recording: " + str(time.time() - start)
 	stream.close()
 	p.terminate()
 	return success
