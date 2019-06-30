@@ -98,6 +98,11 @@ def listen():
 	p.terminate()
 	return success
 
+def send_fishing_float():
+    pyautogui.press("1")
+
+def move_cursor_to_fishing_float(x,y):
+    pyautogui.moveTo(x, y, 0.5)
 
 def main():
     logging.info("Waiting 2 Sec before switching to WOW")
@@ -110,7 +115,7 @@ def main():
     img1 = get_screenshot(region=region)
 
     logging.info("Sending a float")
-    pyautogui.press("1")
+    send_fishing_float()
 
     logging.info("Wait for 2 sec before capture new snapshot")
     time.sleep(2)
@@ -123,7 +128,7 @@ def main():
     cur_y = int(M["m01"] / M["m00"])
     logging.info("Float center at: {}, {}".format(cur_x, cur_y))
 
-    pyautogui.moveTo(cur_x, cur_y, 0.5)
+    move_cursor_to_fishing_float(cur_x, cur_y, 0.5)
 
     # log the screen image
     fullscrn_img = get_screenshot()
