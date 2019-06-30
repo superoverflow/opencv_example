@@ -54,6 +54,13 @@ def compute_diff_from_images(img1, img2):
 def now_str():
     return datetime.now().strftime("%Y%m%d_%H%M%S")
 
+def find_center_of_fishing_float(focus_region,cv2_cnt):
+    cnt_shifted = cv2_cnt + (focus_region[0], focus_region[1])
+    M = cv2.moments(cnt_shifted)
+    cX = int(M["m10"] / M["m00"])
+    cY = int(M["m01"] / M["m00"])
+    return cX, cY
+
 def listen():
 	logging.debug('Well, now we are listening for loud sounds...')
 	CHUNK = 1024  # CHUNKS of bytes to read each time from mic
@@ -121,11 +128,7 @@ def main():
     time.sleep(2)
     img2 = get_screenshot(region=region)
     biggest_cnt = compute_diff_from_images(img1, img2)
-    biggest_cnt_shifted = biggest_cnt + (region[0], region[1])
-    # find center of mass
-    M = cv2.moments(biggest_cnt_shifted)
-    cur_x = int(M["m10"] / M["m00"])
-    cur_y = int(M["m01"] / M["m00"])
+    cur_x, cur_y = find_center_of_fishing_float(focus_region=region, cv2_cnt=biggest_cnt)
     logging.info("Float center at: {}, {}".format(cur_x, cur_y))
 
     move_cursor_to_fishing_float(cur_x, cur_y, 0.5)
