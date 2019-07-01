@@ -45,7 +45,7 @@ def compute_diff_from_images(img1, img2):
     diff = (diff * 255).astype("uint8")
     thresh = cv2.threshold(diff, 0, 255,
         cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)[1]
-    im, contours, hierarchy = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
+    _, contours, _ = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)
     contours.sort(key=cv2.contourArea, reverse=True)
     biggest_cnt = contours[0]
@@ -136,7 +136,7 @@ def debug_img_info(region, cur_x, cur_y, biggest_cnt):
     cv2.waitKey(1000)
 
 def main():
-    logging.info("Waiting 4 Sec before starting, swtich to wow now")
+    logging.info("Waiting 2 Sec before starting, swtich to wow now")
     time.sleep(2)
 
     region = get_focus_region()
