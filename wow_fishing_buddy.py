@@ -12,7 +12,7 @@ import math
 import audioop
 from collections import deque
 
-SCREEN_SIZE = (1280, 768)
+SCREEN_SIZE = (1920, 1080)
 UPPER_CUT = 0.2
 LOWER_CUT = 0.75
 LOGFMT = ("%(asctime)-15s [%(levelname)-5s] %(filename)-10s:%(lineno)-3d "
@@ -153,7 +153,7 @@ def main():
     biggest_cnt = compute_diff_from_images(img1, img2)
     cur_x, cur_y = find_center_of_fishing_float(focus_region=region, cv2_cnt=biggest_cnt)
 
-    move_cursor_to_fishing_float(cur_x, cur_y, 0.5)
+    move_cursor_to_fishing_float(cur_x, cur_y)
     debug_img_info(region, cur_x, cur_y, biggest_cnt)
 
     if listen():
