@@ -8,6 +8,7 @@ def test_compute_diff_from_images():
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     (score, diff) = compare_ssim(gray1, gray2, full=True)
-
+    cv2.imshow("diff", diff)
+    cv2.waitKey(0)
 
 test_compute_diff_from_images()
