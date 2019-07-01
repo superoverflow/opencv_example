@@ -107,6 +107,7 @@ def listen():
 
 def send_fishing_float():
     pyautogui.press("1")
+    pyautogui.press("2")
 
 def move_cursor_to_fishing_float(x,y):
     pyautogui.moveTo(x, y, 0.5)
