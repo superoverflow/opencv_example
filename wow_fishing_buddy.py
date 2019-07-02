@@ -12,7 +12,7 @@ import math
 import audioop
 from collections import deque
 
-SCREEN_SIZE = (1920, 1080)
+SCREEN_SIZE = (1280, 768)
 UPPER_CUT = 0.2
 LOWER_CUT = 0.75
 LOGFMT = ("%(asctime)-15s [%(levelname)-5s] %(filename)-10s:%(lineno)-3d "
@@ -77,7 +77,8 @@ def listen():
                     channels=CHANNELS,
                     rate=RATE,
                     input=True,
-                    frames_per_buffer=CHUNK)
+                    frames_per_buffer=CHUNK,
+                    as_loopback=True)
     cur_data = ''  # current chunk  of audio data
     rel = int(RATE/CHUNK)
     slid_win = deque(maxlen=SILENCE_LIMIT * rel)
@@ -169,3 +170,5 @@ if __name__ == '__main__':
     for i in range(500):
         logging.debug("trial: # {}".format(i))
         main()
+
+            
