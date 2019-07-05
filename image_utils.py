@@ -5,11 +5,12 @@ def diff_images(img1, img2):
     gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
     (score, diff) = compare_ssim(gray1, gray2, full=True)
+
     if score > 0.99:
-        raise Exception("diff not found from images")
+        raise Exception("No observable diff found from images")
+
     diff = (diff * 255).astype("uint8")
-    _, thresh = cv2.threshold(diff, 0, 255,
-        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
+    _, thresh = cv2.threshold(diff, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU)
     return thresh
 
 def get_contours(img):
