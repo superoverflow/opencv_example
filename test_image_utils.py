@@ -6,9 +6,11 @@ def test_diff_images():
     img1 = cv2.imread('test_fixtures/background00.jpg')
     img2 = cv2.imread('test_fixtures/float00.jpg')
     result = diff_images(img1, img2)
-    #cv2.imwrite('test_fixtures/test_diff_images_result.jpg', result)
-    expected = cv2.imread('test_fixtures/test_diff_images_result.jpg')
-    np.testing.assert_array_equal(result, expected)
+
+    # cv2.imwrite('test_fixtures/test_diff_images_result.bmp', result)
+    expected = cv2.imread('test_fixtures/test_diff_images_result.bmp',
+                    cv2.IMREAD_GRAYSCALE)
+    np.testing.assert_almost_equal(result, expected)
 
 def test_get_contours(snapshot):
     img = cv2.imread('test_fixtures/float00.jpg')
