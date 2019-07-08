@@ -14,3 +14,7 @@ brew install portaudio
 - I use this one https://www.vb-audio.com/Cable/
 
 3. since it uses image diff, a large float is required. It can be bought from fishing merchants.
+
+
+# unit-test
+1. uses pytest to run unittest
