@@ -19,7 +19,3 @@ def test_diff_images(snapshot, tmpdir):
     tmpfile = tmpdir.join('test_diff_images_result.bmp')
     cv2.imwrite(str(tmpfile), result)
     snapshot.assert_match(FileSnapshot(str(tmpfile)))
-
-
-
-
