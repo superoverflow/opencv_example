@@ -40,23 +40,30 @@ def crop_required_obj(img, contour):
 def get_descriptor_from_img(img):
     orb = cv2.ORB_create()
     kp, des = orb.detectAndCompute(img, None)
-    cv2.drawKeypoints(img, kp, color=(0, 255, 0),
-        flags=cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS,
-        outImage=img)
-    plt.imshow(img),plt.show()
+    return kp, des
 
-def feature_matching(img, tmpl):
-    pass
+def feature_matching(img, kp, des):
+    img_kp, img_des = get_descriptor_from_img(img)
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matches = bf.match(des, img_des)
+    matches = sorted(matches, key = lambda x:x.distance)
+    return matches
 
 def get_angle_of_rotation(img, tmpl):
     pass
 
-
 if __name__ == '__main__':
-    before = cv2.imread('test_fixtures/background00.jpg')
-    after = cv2.imread('test_fixtures/float00.jpg')
-    diff = diff_images(before, after)
+    background = cv2.imread('test_fixtures/background00.jpg')
+    scene = cv2.imread('test_fixtures/float00.jpg')
+    diff = diff_images(background, scene)
     contour = get_contours(diff)
-    obj = crop_required_obj(after, contour)
-    obj_gray = cv2.cvtColor(obj, cv2.COLOR_BGR2GRAY)
-    get_descriptor_from_img(obj)
+    obj = crop_required_obj(scene, contour)
+
+    obj_kp, obj_des = get_descriptor_from_img(obj)
+    img_kp, img_des = get_descriptor_from_img(scene)
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    matches = bf.match(obj_des, img_des)
+    print(matches)
+    img3 = background.copy()
+    cv2.drawMatches(obj, obj_kp, scene, img_kp, matches[:10], flags=2, outImg=img3)
+    plt.imshow(img3),plt.show()
